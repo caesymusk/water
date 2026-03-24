@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Casey Musk — Daily System</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Syne:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html { background: #000; }
+
+:root {
+  --bg: #000000; --bg2: #0a0a0a; --bg3: #0d0d0d; --bg4: #111;
+  --text: #f0ede8; --text2: #9a9690; --text3: #5a5754; --text4: #3a3734;
+  --purple: #9b8ff5; --purple-dim: #0d0b1e;
+  --teal: #4ecba0; --teal-dim: #040e09;
+  --coral: #f07060; --coral-dim: #130a07;
+  --amber: #f0b060; --amber-dim: #110c03;
+  --green: #5ecb6e; --green-dim: #050e08;
+  --red: #e05555; --red-dim: #110505;
+  --border: rgba(255,255,255,0.07); --border2: rgba(255,255,255,0.13);
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Syne', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* grain overlay */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none; z-index: 1000; opacity: 0.35;
+}
+
+/* NAV */
+.nav {
+  background: rgba(0,0,0,0.99);
+  backdrop-filter: blur(10px);
+  border-bottom: 0.5px solid var(--border2);
+  padding: 0 20px;
+  display: flex; align-items: center;
+  position: sticky; top: 0; z-index: 100;
+  overflow-x: auto; gap: 0;
+}
+.nav-logo {
+  font-family: 'DM Serif Display', serif;
+  font-size: 15px; font-style: italic;
+  color: var(--text3); padding: 14px 0;
+  margin-right: 20px; white-space: nowrap; flex-shrink: 0;
+}
+.nav-logo span { color: var(--purple); font-style: normal; }
+.nb {
+  padding: 15px 13px; font-size: 12px; font-weight: 500;
+  color: var(--text3); cursor: pointer;
+  border-bottom: 2px solid transparent;
+  border-top: none; border-left: none; border-right: none;
+  background: none; font-family: 'Syne', sans-serif;
+  transition: all .15s; white-space: nowrap;
+}
+.nb:hover { color: var(--text2); }
+.nb.active { color: var(--text); border-bottom-color: var(--purple); }
+
+/* PAGES */
+.page { display: none; max-width: 680px; margin: 0 auto; padding: 36px 20px 80px; background: #000; }
+.page.active { display: block; }
+
+/* COVER */
+.cover {
+  min-height: 92svh;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center; padding: 48px 24px 60px;
+}
+.cover-eyebrow {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px; color: var(--text3);
+  letter-spacing: .18em; text-transform: uppercase;
+  margin-bottom: 20px;
+}
+.cover-name {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(52px, 14vw, 88px);
+  line-height: 0.92; font-style: italic;
+  color: var(--text); margin-bottom: 8px;
+}
+.cover-name span { color: var(--purple); font-style: normal; }
+.cover-sub {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px; color: var(--text3);
+  letter-spacing: .12em; text-transform: uppercase;
+  margin-bottom: 32px;
+}
+.cover-stats {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 0; background: var(--border2);
+  border: 0.5px solid var(--border2);
+  border-radius: 12px; overflow: hidden;
+  width: 100%; max-width: 300px; margin-bottom: 36px;
+}
+.cs { background: var(--bg2); padding: 16px 10px; text-align: center; }
+.cs-val { font-family: 'DM Serif Display', serif; font-size: 22px; color: var(--purple); font-style: italic; }
+.cs-lbl { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--text3); letter-spacing: .1em; text-transform: uppercase; margin-top: 3px; }
+.cover-quote {
+  font-family: 'DM Serif Display', serif;
+  font-size: 15px; color: var(--text3);
+  font-style: italic; line-height: 1.7;
+  max-width: 280px;
+}
+
+/* TYPOGRAPHY */
+.eyebrow {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px; color: var(--purple);
+  letter-spacing: .15em; text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.page-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 34px; font-style: italic;
+  line-height: 1; margin-bottom: 12px;
+}
+.page-lead { font-size: 13px; color: var(--text2); line-height: 1.8; margin-bottom: 28px; }
+
+/* DIVIDER */
+.dv {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px; color: var(--text3);
+  letter-spacing: .15em; text-transform: uppercase;
+  margin: 28px 0 14px;
+  display: flex; align-items: center; gap: 12px;
+}
+.dv::after { content: ''; flex: 1; height: 0.5px; background: var(--border); }
+
+/* TIME BLOCK */
+.block {
+  border-radius: 12px; margin-bottom: 10px;
+  overflow: hidden; border: 0.5px solid var(--border);
+  background: var(--bg2);
+}
+.block-head {
+  padding: 14px 18px;
+  display: flex; align-items: center; gap: 12px;
+}
+.block-time {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px; font-weight: 500;
+  min-width: 88px;
+}
+.block-label { font-size: 14px; font-weight: 500; color: var(--text); flex: 1; }
+.block-pill {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px; padding: 2px 8px;
+  border-radius: 20px; border: 0.5px solid;
+  white-space: nowrap; flex-shrink: 0;
+}
+.block-body {
+  padding: 12px 18px 14px;
+  border-top: 0.5px solid rgba(255,255,255,0.04);
+}
+.block-body p { font-size: 13px; color: var(--text2); line-height: 1.75; }
+.block-body strong { color: var(--text); font-weight: 500; }
+.btags { margin-top: 8px; display: flex; flex-wrap: wrap; gap: 5px; }
+.btag {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px; padding: 2px 8px;
+  border-radius: 20px; border: 0.5px solid var(--border2);
+  color: var(--text3);
+}
+
+/* BLOCK COLOURS */
+.b-music .block-head { background: #050510; }
+.b-music .block-time { color: var(--purple); }
+.b-music .block-pill { background: #08071a; color: var(--purple); border-color: var(--purple); }
+
+.b-content .block-head { background: #060510; }
+.b-content .block-time { color: #a78bfa; }
+.b-content .block-pill { background: #0a0916; color: #a78bfa; border-color: #a78bfa; }
+
+.b-dog .block-head { background: #05100a; }
+.b-dog .block-time { color: var(--green); }
+.b-dog .block-pill { background: var(--green-dim); color: var(--green); border-color: var(--green); }
+
+.b-gym .block-head { background: #100505; }
+.b-gym .block-time { color: var(--red); }
+.b-gym .block-pill { background: #0a0303; color: var(--red); border-color: var(--red); }
+
+.b-income .block-head { background: #090e07; }
+.b-income .block-time { color: #a3c760; }
+.b-income .block-pill { background: #0a0f07; color: #a3c760; border-color: #a3c760; }
+
+.b-skin-am .block-head { background: linear-gradient(135deg, #0d0d07, #090e07); }
+.b-skin-am .block-time { color: var(--amber); }
+.b-skin-am .block-pill { background: #0e0a03; color: var(--amber); border-color: var(--amber); }
+
+.b-skin-pm .block-head { background: linear-gradient(135deg, #07050e, #0a070e); }
+.b-skin-pm .block-time { color: var(--purple); }
+.b-skin-pm .block-pill { background: #08071a; color: var(--purple); border-color: var(--purple); }
+
+.b-free .block-head { background: #05090e; }
+.b-free .block-time { color: #5b9bd5; }
+
+.b-wind .block-head { background: #090807; }
+.b-wind .block-time { color: var(--amber); }
+
+.b-rest .block-head { background: #0a0a0a; }
+.b-rest .block-time { color: var(--text3); }
+
+/* CANON EVENT */
+.canon {
+  background: #08071a;
+  border: 0.5px solid var(--purple);
+  border-radius: 12px; padding: 16px 20px; margin-bottom: 10px;
+}
+.canon-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px; color: var(--purple);
+  letter-spacing: .12em; text-transform: uppercase;
+  margin-bottom: 6px; display: flex; align-items: center; gap: 6px;
+}
+.canon-label::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: var(--purple); flex-shrink: 0; }
+.canon-title { font-size: 14px; font-weight: 500; color: var(--text); margin-bottom: 4px; }
+.canon-desc { font-size: 12px; color: rgba(155,143,245,.75); line-height: 1.65; }
+
+/* SKIN ROUTINE */
+.skin-r { background: var(--bg2); border: 0.5px solid var(--border); border-radius: 12px; overflow: hidden; margin-bottom: 12px; }
+.skin-r-head { padding: 14px 18px; display: flex; align-items: center; gap: 12px; }
+.skin-r-head.am { background: linear-gradient(135deg, #0d0d07, #05090e); }
+.skin-r-head.pm { background: linear-gradient(135deg, #07050e, #0a0509); }
+.skin-r-title { font-size: 14px; font-weight: 500; color: var(--text); }
+.skin-r-time { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text3); margin-top: 2px; }
+.skin-step { display: flex; gap: 0; border-top: 0.5px solid #161616; }
+.skin-num { background: #050505; min-width: 44px; display: flex; align-items: center; justify-content: center; font-family: 'DM Mono', monospace; font-size: 12px; font-weight: 500; }
+.skin-step.am .skin-num { color: var(--amber); }
+.skin-step.pm .skin-num { color: var(--purple); }
+.skin-b { padding: 12px 16px; flex: 1; }
+.skin-product { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 3px; }
+.skin-how { font-size: 12px; color: var(--text3); line-height: 1.6; }
+.skin-how strong { color: var(--text2); }
+.skin-why {
+  display: inline-block; margin-top: 5px;
+  font-family: 'DM Mono', monospace; font-size: 9px;
+  padding: 2px 7px; border-radius: 20px;
+}
+.skin-step.am .skin-why { background: #0e0a03; color: var(--amber); }
+.skin-step.pm .skin-why { background: #08071a; color: var(--purple); }
+
+.warn-box { background: #0a0303; border: 0.5px solid var(--red); border-radius: 10px; padding: 14px 16px; margin-bottom: 14px; }
+.warn-label { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--red); letter-spacing: .1em; text-transform: uppercase; margin-bottom: 6px; }
+.warn-text { font-size: 12px; color: #cc8888; line-height: 1.7; }
+.warn-text strong { color: #ffaaaa; }
+
+.tip-box { background: #030e08; border: 0.5px solid var(--teal); border-radius: 10px; padding: 14px 16px; margin-top: 12px; }
+.tip-text { font-size: 12px; color: rgba(78,203,160,.75); line-height: 1.7; }
+.tip-text strong { color: var(--teal); }
+
+/* DOT LIST */
+.dl { display: flex; flex-direction: column; gap: 0; }
+.dr { display: flex; gap: 12px; align-items: flex-start; padding: 9px 0; border-bottom: 0.5px solid var(--border); }
+.dr:last-child { border-bottom: none; }
+.dd { width: 4px; height: 4px; border-radius: 50%; flex-shrink: 0; margin-top: 7px; }
+.dd.p { background: var(--purple); }
+.dd.t { background: var(--teal); }
+.dd.c { background: var(--coral); }
+.dd.a { background: var(--amber); }
+.dd.g { background: var(--green); }
+.dd.r { background: var(--red); }
+.dt { font-size: 13px; color: var(--text2); line-height: 1.65; }
+.dt strong { color: var(--text); font-weight: 500; }
+
+/* CONTENT GRID */
+.content-day { background: var(--bg2); border: 0.5px solid var(--border); border-radius: 10px; margin-bottom: 8px; overflow: hidden; }
+.cd-head { background: #050510; padding: 11px 16px; display: flex; align-items: center; justify-content: space-between; }
+.cd-day { font-family: 'DM Mono', monospace; font-size: 10px; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; color: var(--purple); }
+.cd-theme { font-size: 13px; font-weight: 500; color: var(--text); }
+.cd-body { padding: 10px 16px; }
+.cd-item { padding: 7px 0; border-bottom: 0.5px solid #161616; display: flex; gap: 10px; align-items: flex-start; }
+.cd-item:last-child { border-bottom: none; }
+.cd-plat { font-family: 'DM Mono', monospace; font-size: 9px; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; min-width: 60px; padding-top: 2px; }
+.cd-plat.tt { color: var(--teal); }
+.cd-plat.ig { color: var(--coral); }
+.cd-plat.yt { color: var(--amber); }
+.cd-desc { font-size: 12px; color: var(--text3); line-height: 1.55; }
+
+/* RULES */
+.rule { display: flex; gap: 14px; padding: 14px 0; border-bottom: 0.5px solid var(--border); align-items: flex-start; }
+.rule:last-child { border-bottom: none; }
+.rule-n { font-family: 'DM Serif Display', serif; font-size: 24px; color: var(--text4); font-style: italic; width: 28px; flex-shrink: 0; line-height: 1; margin-top: 2px; }
+.rule-body .rule-title { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 3px; }
+.rule-body .rule-desc { font-size: 12px; color: var(--text2); line-height: 1.65; }
+
+/* QUOTE */
+.quote { background: var(--bg2); border-left: 2px solid var(--purple); border-radius: 0 10px 10px 0; padding: 16px 18px; margin-bottom: 12px; }
+.quote p { font-family: 'DM Serif Display', serif; font-size: 15px; color: var(--text); font-style: italic; line-height: 1.75; }
+.quote .qa { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--text3); margin-top: 8px; letter-spacing: .06em; }
+
+/* ACCENT CARDS */
+.ac { border-radius: 12px; padding: 16px 20px; margin-bottom: 10px; }
+.ac-p { background: #08071a; border: 0.5px solid var(--purple); }
+.ac-t { background: #030e08; border: 0.5px solid var(--teal); }
+.ac-c { background: var(--coral-dim); border: 0.5px solid var(--coral); }
+.ac-a { background: #0e0a03; border: 0.5px solid var(--amber); }
+.ac p { font-size: 13px; line-height: 1.75; }
+.ac-p p { color: rgba(155,143,245,.85); }
+.ac-t p { color: rgba(78,203,160,.85); }
+.ac-c p { color: rgba(240,112,96,.85); }
+.ac-a p { color: rgba(240,176,96,.85); }
+
+/* SONG ARC MINI */
+.arc-row { display: flex; gap: 10px; align-items: flex-start; padding: 10px 0; border-bottom: 0.5px solid var(--border); }
+.arc-row:last-child { border-bottom: none; }
+.arc-num { font-family: 'DM Serif Display', serif; font-size: 18px; color: var(--text4); font-style: italic; width: 22px; flex-shrink: 0; }
+.arc-title { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 2px; }
+.arc-feel { font-size: 11px; color: var(--text3); font-style: italic; }
+.arc-ch { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--text3); text-align: right; white-space: nowrap; margin-left: auto; padding-top: 3px; }
+
+/* TWO COL */
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+@media (max-width: 480px) { .two { grid-template-columns: 1fr; } }
+
+/* CARD */
+.card { background: var(--bg2); border: 0.5px solid var(--border); border-radius: 10px; padding: 16px 18px; margin-bottom: 10px; }
+.card-lbl { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--text3); text-transform: uppercase; letter-spacing: .1em; margin-bottom: 6px; }
+.card-title { font-size: 14px; font-weight: 500; color: var(--text); margin-bottom: 4px; }
+.card-body { font-size: 12px; color: var(--text2); line-height: 1.7; }
+
+/* CHICAGO COUNTDOWN */
+.countdown { text-align: center; padding: 24px 0; }
+.countdown-num { font-family: 'DM Serif Display', serif; font-size: 80px; color: var(--purple); font-style: italic; line-height: 1; }
+.countdown-lbl { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text3); letter-spacing: .15em; text-transform: uppercase; margin-top: 6px; }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-logo">casey <span>musk.</span></div>
+  <button class="nb active" onclick="go('p-cover',this)">Home</button>
+  <button class="nb" onclick="go('p-day1',this)">Mon</button>
+  <button class="nb" onclick="go('p-day2',this)">Tue</button>
+  <button class="nb" onclick="go('p-day3',this)">Wed</button>
+  <button class="nb" onclick="go('p-day4',this)">Thu</button>
+  <button class="nb" onclick="go('p-day5',this)">Fri</button>
+  <button class="nb" onclick="go('p-day6',this)">Sat</button>
+  <button class="nb" onclick="go('p-day7',this)">Sun</button>
+  <button class="nb" onclick="go('p-skin',this)">Skincare</button>
+  <button class="nb" onclick="go('p-laws',this)">Laws</button>
+</nav>
+
+<!-- ══ COVER ══ -->
+<div class="page active" id="p-cover" style="padding:0;max-width:100%">
+  <div class="cover">
+    <div class="cover-eyebrow">Casey Musk · Daily System · CDMX → Chicago</div>
+    <div class="cover-name">own<br><span>your</span><br>day.</div>
+    <div class="cover-sub">Music · Content · Skin · Body · Chicago</div>
+    <div class="cover-stats">
+      <div class="cs"><div class="cs-val">7am</div><div class="cs-lbl">Wake up</div></div>
+      <div class="cs"><div class="cs-val">~90</div><div class="cs-lbl">Days to CHI</div></div>
+      <div class="cs"><div class="cs-val">10</div><div class="cs-lbl">Songs in arc</div></div>
+    </div>
+    <div class="cover-quote">"the music is the only thing i've ever been sure about."<br><br>build the day around that.</div>
+  </div>
+</div>
+
+<!-- ══ DAY 1 — MONDAY ══ -->
+<div class="page" id="p-day1">
+  <div class="eyebrow">Monday · Day 1</div>
+  <div class="page-title" style="color:var(--purple)">Monday</div>
+  <div class="page-lead">Chest &amp; Triceps. Heavy creative block. Music behind the scenes content.</div>
+
+  <div class="block b-skin-am">
+    <div class="block-head"><span class="block-time">7:00–7:20</span><span class="block-label">Wake up · make bed · morning skincare</span><span class="block-pill">5 min routine</span></div>
+    <div class="block-body"><p><strong>Make the bed immediately.</strong> Water + 5-step skincare. Cleanser → HA (damp skin) → Peptides → Eye Serum → Oil Control ISDIN. No phone until done.</p></div>
+  </div>
+
+  <div class="block b-dog">
+    <div class="block-head"><span class="block-time">7:20–8:20</span><span class="block-label">Morning dog walk</span><span class="block-pill">film the walk</span></div>
+    <div class="block-body"><p>1 hour. Film at least 1 clip. Voice-note melody ideas. No scrolling.</p></div>
+  </div>
+
+  <div class="block b-rest">
+    <div class="block-head"><span class="block-time">8:20–8:40</span><span class="block-label">Breakfast</span><span class="block-pill">~35g protein · ~58g carbs</span></div>
+    <div class="block-body"><p><strong>4 scrambled eggs + ¾ cup dry oats (water, dash of honey) + black coffee.</strong> Prep ~10 min. Don't skip — 2 hrs creative work on empty kills focus.</p><div class="btags"><span class="btag">4 eggs</span><span class="btag">¾ cup oats</span><span class="btag">black coffee</span></div></div>
+  </div>
+
+  <div class="block b-music">
+    <div class="block-head"><span class="block-time">8:40–8:55</span><span class="block-label">Voice warmup + rep practice</span><span class="block-pill">15 min · every day</span></div>
+    <div class="block-body"><p><strong>Every single day before the music block.</strong> 5 min: lip trills, sirens, scales. Then 10 min running your current rep — not performing it, ingraining it. This is what the Friday coach sessions build on.</p><div class="btags"><span class="btag">lip trills</span><span class="btag">sirens</span><span class="btag">scales</span><span class="btag">rep run-through</span></div></div>
+  </div>
+
+  <div class="block b-music">
+    <div class="block-head"><span class="block-time">8:55–9:00</span><span class="block-label">Pre-workout shake</span><span class="block-pill">~25g protein · perfect window</span></div>
+    <div class="block-body"><p>1 scoop Habits Protein with water or almond milk. <strong>35 min before 9:30 gym = perfect absorption window.</strong></p><div class="btags"><span class="btag">1 scoop Habits</span><span class="btag">water or almond milk</span></div></div>
+  </div>
+
+  <div class="block b-rest">
+    <div class="block-head"><span class="block-time">9:00–9:30</span><span class="block-label">Music — 30 min before gym</span><span class="block-pill">warm up the mind</span></div>
+    <div class="block-body"><p>30 minutes. Keep it loose — play with ideas, revisit yesterday's work, let something sit. <strong>Don't start anything new.</strong> The real music block happens after gym when your body is activated.</p><div class="btags"><span class="btag">revisit yesterday</span><span class="btag">play with ideas</span><span class="btag">no new starts</span></div></div>
+  </div>
+
+  <div class="block b-gym">
+    <div class="block-head"><span class="block-time">9:30–11:15</span><span class="block-label">Gym + sauna</span><span class="block-pill">HA after sauna</span></div>
+    <div class="block-body"><p>45-min workout + 15-min sauna. <strong>Chest &amp; Triceps: Bench Press · Incline DB Press · Cable Flyes · Tricep Pushdown · Overhead Extension + 10 min treadmill 8–10% incline.</strong> HA immediately after sauna — pores open, deepest absorption.</p></div>
+  </div>
+
+  <div class="block b-rest">
+    <div class="block-head"><span class="block-time">11:15–11:35</span><span class="block-label">Post-workout shake + shower</span><span class="block-pill">~25g protein · most important shake</span></div>
+    <div class="block-body"><p><strong>1 scoop Habits + 1 banana immediately after sauna.</strong> Most important shake of the day. Then shower (lukewarm water only).</p><div class="btags"><span class="btag">1 scoop Habits</span><span class="btag">1 banana</span><span class="btag">within 30 min of sauna</span><span class="btag">then shower</span></div></div>
+  </div>
+
+  <div class="block b-music">
+    <div class="block-head"><span class="block-time">11:35–14:00</span><span class="block-label">Music block — writing &amp; recording</span><span class="block-pill">main block · airplane mode</span></div>
+    <div class="block-body"><p><strong>Airplane mode. 2h25min.</strong> This is your biggest creative block of the day — post-gym, body activated, mind sharp. Write, record, produce. This is longer than the old pre-gym block.</p><div class="btags"><span class="btag">airplane mode</span><span class="btag">write</span><span class="btag">record</span><span class="btag">produce</span></div></div>
+  </div>
+
+  <div class="block b-rest">
+    <div class="block-head"><span class="block-time">14:00–14:30</span><span class="block-label">Lunch + 3 tasks for tomorrow</span><span class="block-pill">~50g protein · ~60g carbs</span></div>
+    <div class="block-body"><p><strong>Chicken rice bowl: 6 oz grilled chicken + ¾ cup white rice + spinach + olive oil + garlic powder.</strong> Write 3 tasks: one music, one content, one income. ~5 min prep if batch-cooked Sunday.</p><div class="btags"><span class="btag">6oz chicken</span><span class="btag">¾ cup rice</span><span class="btag">spinach</span><span class="btag">3 tasks</span></div></div>
+  </div>
+
+  <div class="block b-content">
+    <div class="block-head"><span class="block-time">14:30–15:30</span><span class="block-label">Content block</span><span class="block-pill">Monday: music BTS</span></div>
+    <div class="block-body"><p>Edit clips from the walk + morning session. Schedule to post 7–9pm. Plan tomorrow's post in the last 10 min.</p><div class="btags"><span class="btag">edit</span><span class="btag">TikTok + IG + YT</span><span class="btag">schedule 7–9pm</span><span class="btag">plan tomorrow</span></div></div>
+  </div>
+
+  <div class="block b-income">
+    <div class="block-head"><span class="block-time">15:30–17:00</span><span class="block-label">Income work</span><span class="block-pill">dog training / clients</span></div>
+    <div class="block-body"><p>Dog training, client messages, all communication batched here.</p></div>
+  </div>
+
+  <div class="block b-music">
+    <div class="block-head"><span class="block-time">17:00–17:30</span><span class="block-label">Music block 2 — admin &amp; outreach</span><span class="block-pill">playlist pitching</span></div>
+    <div class="block-body"><p>Playlist pitching, distributor uploads, industry outreach, Chicago research.</p></div>
+  </div>
+
+  <div class="block b-free">
+    <div class="block-head"><span class="block-time">17:30–19:00</span><span class="block-label">Free time</span><span class="block-pill">fully yours</span></div>
+    <div class="block-body"><p>You've done the work. Rest guilt-free.</p></div>
+  </div>
+
+  <div class="block b-rest">
+    <div class="block-head"><span class="block-time">19:00–19:30</span><span class="block-label">Dinner</span><span class="block-pill">~40g protein · ~25g carbs</span></div>
+    <div class="block-body"><p><strong>5 oz salmon or tuna + 1 medium sweet potato (microwave 6 min) + steamed broccoli or mixed veg.</strong> Eat away from screens. Prep ~10 min.</p><div class="btags"><span class="btag">5oz salmon/tuna</span><span class="btag">sweet potato</span><span class="btag">steamed veg</span></div></div>
+  </div>
+
+  <div class="block b-free">
+    <div class="block-head"><span class="block-time">19:30–20:00</span><span class="block-label">Digest · wind down</span><span class="block-pill">relax</span></div>
+    <div class="block-body"><p>Decompress. Get ready for the evening walk.</p></div>
+  </div>
+
+  <div class="block b-dog">
+    <div class="block-head"><span class="block-time">20:00–21:00</span><span class="block-label">Evening dog walk</span><span class="block-pill">film a clip</span></div>
+    <div class="block-body"><p>Evening light. Film. Decompress. Leave earbuds out sometimes.</p></div>
+  </div>
+
+  <div class="block b-skin-pm">
+    <div class="block-head"><span class="block-time">21:00–21:15</span><span class="block-label">Evening skincare</span><span class="block-pill">retinol tonight — Mon</span></div>
+    <div class="block-body"><p>Cleanser → HA → Peptides → Oxy ISDIN Eyes → <strong>Retinol (Mon = yes)</strong> — pea-size, always last. Phone away after.</p></div>
+  </div>
+
+  <div class="block b-wind">
+    <div class="block-head"><span class="block-time">21:15–22:30</span><span class="block-label">Wind down · sleep by 22:30</span><span class="block-pill">no screens</span></div>
+    <div class="block-body"><p>No screens. Set up workspace. Review 3 tasks. <strong>Optional evening Habits shake if under 155g protein.</strong></p></div>
+  </div>
+
+</div>
+
+<!-- ══ DAY 2 — TUESDAY ══ -->
+<div class="page" id="p-day2">
+  <div class="eyebrow">Tuesday · Day 2</div>
+  <div class="page-title" style="color:var(--coral)">Tuesday</div>
+  <div class="page-lead">No gym — tennis tonight. Personal brand content. Extended vocal practice fills the gym slot.</div>
+
+  <div class="block b-skin-am">
+    <div class="block-head"><span class="block-time">7:00–7:20</span><span class="block-label">Wake up · make bed · morning skincare</span><span class="block-pill">5 min routine</span></div>
+    <div class="block-body"><p><strong>Make the bed.</strong> Water + skincare. No phone until done.</p></div>
+  </div>
+  <div class="block b-dog">
+    <div class="block-head"><span class="block-time">7:20–8:20</span><span class="block-label">Morning dog walk</span><span class="block-pill">film the walk itself</span></div>
+    <div class="block-body"><p>Film the walk as content — CDMX morning streets, the dogs, singing while walking. Tuesday = day in the life.</p></div>
+  </div>
+  <div class="block b-rest">
+    <div class="block-head"><span class="block-time">8:20–8:40</span><span class="block-label">Breakfast</span><span class="block-pill">~35g protein · ~58g carbs</span></div>
+    <div class="block-body"><p><strong>4 scrambled eggs + ¾ cup dry oats + black coffee.</strong> Prep ~10 min.</p><div class="btags"><span class="btag">4 eggs</span><span class="btag">¾ cup oats</span><span class="btag">black coffee</span></div></div>
+  </div>
+  <div class="block b-music">
+    <div class="block-head"><span class="block-time">8:40–8:55</span><span class="block-label">Voice warmup + rep practice</span><span class="block-pill">15 min · daily</span></div>
+    <div class="block-body"><p>Lip trills, sirens, scales (5 min). Then 10 min running your rep.</p></div>
+  </div>
+  <div class="block b-music">
+    <div class="block-head"><span class="block-time">8:55–10:30</span><span class="block-label">Music block — deep work</span><span class="block-pill">airplane mode</span></div>
+    <div class="block-body"><p><strong>Airplane mode.</strong> Continue from Monday. The arc builds in consecutive mornings.</p></div>
+  </div>
+  <div class="block b-music">
+    <div class="block-head"><span class="block-time">10:30–11:30</span><span class="block-label">Extended vocal practice</span><span class="block-pill">gym rest day — use the hour</span></div>
+    <div class="block-body"><p><strong>No gym today — put that hour into your voice.</strong> Full song run-throughs. Record yourself and listen back. Work on any phrases the coach flagged. This is your second vocal session.</p><div class="btags"><span class="btag">full run-throughs</span><span class="btag">record + listen back</span><span class="btag">work on weak phrases</span></div></div>
+  </div>
+  <div class="block b-rest">
+    <div class="block-head"><span class="block-time">11:30–11:45</span><span class="block-label">Shower</span><span class="block-pill">mid-morning</span></div>
+    <div class="block-body"><p>Shower. Lukewarm water.</p></div>
+  </div>
+  <div class="block b-content">
+    <div class="block-head"><span class="block-time">11:45–14:00</span><span class="block-label">Content block</span><span class="block-pill">Tuesday: day in the life</span></div>
+    <div class="block-body"><p>Edit the walk footage. Day in the life — gym, dogs, music. Schedule 7–9pm TikTok.</p><div class="btags"><span class="btag">edit walk clip</span><span class="btag">TikTok + IG</span><span class="btag">schedule 7–9pm</span></div></div>
+  </div>
+  <div class="block b-rest">
+    <div class="block-head"><span class="block-time">14:00–14:30</span><span class="block-label">Lunch + 3 tasks</span><span class="block-pill">~50g protein · ~60g carbs</span></div>
+    <div class="block-body"><p><strong>Chicken rice bowl.</strong> Write 3 tasks for Wednesday.</p><div class="btags"><span class="btag">6oz chicken</span><span class="btag">¾ cup rice</span><span class="btag">spinach</span></div></div>
+  </div>
+  <div class="block b-income">
+    <div class="block-head"><span class="block-time">14:30–16:30</span><span class="block-label">Income work</span><span class="block-pill">dog training / clients</span></div>
+    <div class="block-body"><p>Dog training, client messages, all communication batched here.</p></div>
+  </div>
+  <div class="block b-music">
+    <div class="block-head"><span class="block-time">16:30–17:30</span><span class="block-label">Music block 2 — admin</span><span class="block-pill">outreach</span></div>
+    <div class="block-body"><p>Playlist pitching, uploads, outreach, Chicago research.</p></div>
+  </div>
+  <div class="block b-free">
+    <div class="block-head"><span class="block-time">17:30–18:45</span><span class="block-label">Free time</span><span class="block-pill">before tennis</span></div>
+    <div class="block-body"><p>Rest before tennis. Light snack if needed.</p></div>
+  </div>
+  <div class="block b-gym">
+    <div class="block-head"><span class="block-time">18:45–19:00</span><span class="block-label">Drive to tennis</span><span class="block-pill">15 min</span></div>
+    <div class="block-body"><p>Leave at 18:45 — 15 min drive, arrive 19:00 on time.</p></div>
+  </div>
+  <div class="block b-gym">
+    <div class="block-head"><span class="block-time">19:00–20:00</span><span class="block-label">Tennis</span><span class="block-pill">cardio on gym rest day</span></div>
+    <div class="block-body"><p>1 hour. Good cardio without hitting the same muscles as the gym split.</p></div>
+  </div>
+  <div class="block b-rest">
+    <div class="block-head"><span class="block-time">20:00–20:30</span><span class="block-label">Drive home</span><span class="block-pill">~30 min traffic</span></div>
+    <div class="block-body"><p>30 min back due to traffic. Voice-note any ideas on the drive.</p></div>
+  </div>
+  <div class="block b-rest">
+    <div class="block-head"><span class="block-time">20:30–21:00</span><span class="block-label">Shower + dinner</span><span class="block-pill">post-tennis</span></div>
+    <div class="block-body"><p>Quick shower, then dinner. <strong>5 oz salmon/tuna + sweet potato + steamed veg.</strong> Screens away.</p><div class="btags"><span class="btag">shower first</span><span class="btag">5oz salmon/tuna</span><span class="btag">sweet potato</span><span class="btag">steamed veg</span></div></div>
+  </div>
+  <div class="block b-skin-pm">
+    <div class="block-head"><span class="block-time">21:00–21:15</span><span class="block-label">Evening skincare</span><span class="block-pill">no retinol — Tue</span></div>
+    <div class="block-body"><p>Cleanser → HA → Peptides → Oxy ISDIN Eyes → <strong>Oil Control ISDIN (Tue = no retinol)</strong>. Phone away.</p></div>
+  </div>
+  <div class="block b-wind">
+    <div class="block-head"><span class="block-time">21:15–22:30</span><span class="block-label">Wind down · sleep by 22:30</span><span class="block-pill">no screens</span></div>
+    <div class="block-body"><p>No screens. Set up workspace. Review 3 tasks. Evening Habits shake if under 155g protein.</p></div>
+  </div>
+</div>
+
+<!-- ══ DAY 3 — WEDNESDAY ══ -->
+<div class="page" id="p-day3">
+  <div class="eyebrow">Wednesday · Day 3</div>
+  <div class="page-title" style="color:var(--teal)">Wednesday</div>
+  <div class="page-lead">Back &amp; Biceps. Music snippet content. Retinol tonight.</div>
+
+  <div class="block b-skin-am">
+    <div class="block-head"><span class="block-time">7:00–7:20</span><span class="block-label">Wake up · make bed · morning skincare</span><span class="block-pill">5 min routine</span></div>
+    <div class="block-body"><p><strong>Make the bed immediately.</strong> Water + 5-step skincare. Cleanser → HA (damp skin) → Peptides → Eye Serum → Oil Control ISDIN. No phone until done.</p></div>
+  </div>
+
+  <div class="block b-dog">
+    <div class="block-head"><span class="block-time">7:20–8:20</span><span class="block-label">Morning dog walk</span><span class="block-pill">film 1 clip</span></div>
+    <div class="block-body"><p>1 hour. Film at least 1 clip. Voice-note melody ideas. No scrolling.</p></div>
+  </div>
+
+  <div class="block b-rest">
+    <div class="block-head"><span class="block-time">8:20–8:40</span><span class="block-label">Breakfast</span><span class="block-pill">~35g protein · ~58g carbs</span></div>
+    <div class="block-body"><p><strong>4 scrambled eggs + ¾ cup dry oats (water, dash of honey) + black coffee.</strong> Prep ~10 min. Don't skip — 2 hrs creative work on empty kills focus.</p><div class="btags"><span class="btag">4 eggs</span><span class="btag">¾ cup oats</span><span class="btag">black coffee</span></div></div>
+  </div>
+
+  <div class="block b-music">
+    <div class="block-head"><span class="block-time">8:40–8:55</span><span class="block-label">Voice warmup + rep practice</span><span class="block-pill">15 min · every day</span></div>
+    <div class="block-body"><p><strong>Every single day before the music block.</strong> 5 min: lip trills, sirens, scales. Then 10 min running your current rep — not performing it, ingraining it. This is what the Friday coach sessions build on.</p><div class="btags"><span class="btag">lip trills</span><span class="btag">sirens</span><span class="btag">scales</span><span class="btag">rep run-through</span></div></div>
+  </div>
+
+  <div class="block b-music">
+    <div class="block-head"><span class="block-time">8:55–9:00</span><span class="block-label">Pre-workout shake</span><span class="block-pill">airplane mode</span></div>
+    <div class="block-body"><p><strong>Airplane mode.</strong> Aim for a full take today — snippet material for tonight's post.</p><div class="btags"><span class="btag">airplane mode</span><span class="btag">aim for a take</span><span class="btag">snippet for post</span></div></div>
+  </div>
+
+  <div class="block b-rest">
+    <div class="block-head"><span class="block-time">9:00–9:30</span><span class="block-label">Music — 30 min before gym</span><span class="block-pill">warm up the mind</span></div>
+    <div class="block-body"><p>30 minutes. Keep it loose — play with ideas, revisit yesterday's work, let something sit. <strong>Don't start anything new.</strong> The real music block happens after gym when your body is activated.</p><div class="btags"><span class="btag">revisit yesterday</span><span class="btag">play with ideas</span><span class="btag">no new starts</span></div></div>
+  </div>
+
+  <div class="block b-gym">
+    <div class="block-head"><span class="block-time">9:30–11:15</span><span class="block-label">Gym + sauna</span><span class="block-pill">HA after sauna</span></div>
+    <div class="block-body"><p>45-min workout + 15-min sauna. <strong>Back &amp; Biceps: Lat Pulldown · Seated Cable Row · Single-Arm DB Row · Face Pulls · DB Curls + 10 min rowing machine (22–26 strokes/min).</strong> HA immediately after sauna — pores open, deepest absorption.</p></div>
+  </div>
+
+  <div class="block b-rest">
+    <div class="block-head"><span class="block-time">11:15–11:35</span><span class="block-label">Post-workout shake + shower</span><span class="block-pill">~25g protein · most important shake</span></div>
+    <div class="block-body"><p><strong>1 scoop Habits + 1 banana immediately after sauna.</strong> Most important shake of the day. Then shower (lukewarm water only).</p><div class="btags"><span class="btag">1 scoop Habits</span><span class="btag">1 banana</span><span class="btag">within 30 min of sauna</span><span class="btag">then shower</span></div></div>
+  </div>
+
+  <div class="block b-music">
+    <div class="block-head"><span class="block-time">11:35–14:00</span><span class="block-label">Music block — recording focus</span><span class="block-pill">main block · airplane mode</span></div>
+    <div class="block-body"><p><strong>Airplane mode. 2h25min.</strong> This is your biggest creative block of the day — post-gym, body activated, mind sharp. Write, record, produce. This is longer than the old pre-gym block.</p><div class="btags"><span class="btag">airplane mode</span><span class="btag">write</span><span class="btag">record</span><span class="btag">produce</span></div></div>
+  </div>
+
+  <div class="block b-rest">
+    <div class="block-head"><span class="block-time">14:00–14:30</span><span class="block-label">Lunch + 3 tasks for tomorrow</span><span class="block-pill">~50g protein · ~60g carbs</span></div>
+    <div class="block-body"><p><strong>Chicken rice bowl: 6 oz grilled chicken + ¾ cup white rice + spinach + olive oil + garlic powder.</strong> Write 3 tasks: one music, one content, one income. ~5 min prep if batch-cooked Sunday.</p><div class="btags"><span class="btag">6oz chicken</span><span class="btag">¾ cup rice</span><span class="btag">spinach</span><span class="btag">3 tasks</span></div></div>
+  </div>
+
+  <div class="block b-content">
+    <div class="block-head"><span class="block-time">14:30–15:30</span><span class="block-label">Content block</span><span class="block-pill">Wednesday: music snippet</span></div>
+    <div class="block-body"><p>Edit clips from the walk + morning session. Schedule to post 7–9pm. Plan tomorrow's post in the last 10 min.</p><div class="btags"><span class="btag">edit</span><span class="btag">TikTok + IG + YT</span><span class="btag">schedule 7–9pm</span><span class="btag">plan tomorrow</span></div></div>
+  </div>
+
+  <div class="block b-income">
+    <div class="block-head"><span class="block-time">15:30–17:00</span><span class="block-label">Income work</span><span class="block-pill">dog training / clients</span></div>
+    <div class="block-body"><p>Dog training, client messages, all communication batched here.</p></div>
+  </div>
+
+  <div class="block b-music">
+    <div class="block-head"><span class="block-time">17:00–17:30</span><span class="block-label">Music block 2 — admin &amp; outreach</span><span class="block-pill">playlist pitching</span></div>
+    <div class="block-body"><p>Playlist pitching, distributor uploads, industry outreach, Chicago research.</p></div>
+  </div>
+
+  <div class="block b-free">
+    <div class="block-head"><span class="block-time">17:30–19:00</span><span class="block-label">Free time</span><span class="block-pill">fully yours</span></div>
+    <div class="block-body"><p>You've done the work. Rest guilt-free.</p></div>
+  </div>
+
+  <div class="block b-rest">
+    <div class="block-head"><span class="block-time">19:00–19:30</span><span class="block-label">Dinner</span><span class="block-pill">~40g protein · ~25g carbs</span></div>
+    <div class="block-body"><p><strong>5 oz salmon or tuna + 1 medium sweet potato (microwave 6 min) + steamed broccoli or mixed veg.</strong> Eat away from screens. Prep ~10 min.</p><div class="btags"><span class="btag">5oz salmon/tuna</span><span class="btag">sweet potato</span><span class="btag">steamed veg</span></div></div>
+  </div>
+
+  <div class="block b-free">
+    <div class="block-head"><span class="block-time">19:30–20:00</span><span class="block-label">Digest · wind down</span><span class="block-pill">relax</span></div>
+    <div class="block-body"><p>Decompress. Get ready for the evening walk.</p></div>
+  </div>
+
+  <div class="block b-dog">
+    <div class="block-head"><span class="block-time">20:00–21:00</span><span class="block-label">Evening dog walk</span><span class="block-pill">film a clip</span></div>
+    <div class="block-body"><p>Evening light. Film. Decompress. Leave earbuds out sometimes.</p></div>
+  </div>
+
+  <div class="block b-skin-pm">
+    <div class="block-head"><span class="block-time">21:00–21:15</span><span class="block-label">Evening skincare</span><span class="block-pill">retinol tonight — Wed</span></div>
+    <div class="block-body"><p>Cleanser → HA → Peptides → Oxy ISDIN Eyes → <strong>Retinol (Wed = yes)</strong> — pea-size, always last. Phone away after.</p></div>
+  </div>
+
+  <div class="block b-wind">
+    <div class="block-head"><span class="block-time">21:15–22:30</span><span class="block-label">Wind down · sleep by 22:30</span><span class="block-pill">no screens</span></div>
+    <div class="block-body"><p>No screens. Set up workspace. Review 3 tasks. <strong>Optional evening Habits shake if under 155g protein.</strong></p></div>
+  </div>
+
+</div>
+
+<!-- ══ DAY 4 — THURSDAY ══ -->
+<div class="page" id="p-day4">
+  <div class="eyebrow">Thursday · Day 4</div>
+  <div class="page-title" style="color:var(--amber)">Thursday</div>
+  <div class="page-lead">No gym — tennis tonight. Storytime content. Extended vocal practice. Prep for Friday coach session.</div>
+
+  <div class="block b-skin-am">
+    <div class="block-head"><span class="block-time">7:00–7:20</span><span class="block-label">Wake up · make bed · morning skincare</span><span class="block-pill">5 min routine</span></div>
+    <div class="block-body"><p><strong>Make the bed.</strong> Water + skincare. No phone until done.</p></div>
+  </div>
+  <div class="block b-dog">
+    <div class="block-head"><span class="block-time">7:20–8:20</span><span class="block-label">Morning dog walk</span><span class="block-pill">talk to camera</span></div>
+    <div class="block-body"><p>Film yourself talking to camera — honest talk, the move, what you're building. That's Thursday's content.</p></div>
+  </div>
+  <div class="block b-rest">
+    <div class="block-head"><span class="block-time">8:20–8:40</span><span class="block-label">Breakfast</span><span class="block-pill">~35g protein · ~58g carbs</span></div>
+    <div class="block-body"><p><strong>4 scrambled eggs + ¾ cup dry oats + black coffee.</strong> Prep ~10 min.</p><div class="btags"><span class="btag">4 eggs</span><span class="btag">¾ cup oats</span><span class="btag">black coffee</span></div></div>
+  </div>
+  <div class="block b-music">
+    <div class="block-head"><span class="block-time">8:40–8:55</span><span class="block-label">Voice warmup + rep practice</span><span class="block-pill">15 min · daily</span></div>
+    <div class="block-body"><p>Lip trills, sirens, scales (5 min). Then 10 min running your rep. <strong>Tomorrow is coach day — be sharp.</strong></p></div>
+  </div>
+  <div class="block b-music">
+    <div class="block-head"><span class="block-time">8:55–10:30</span><span class="block-label">Music block — creative work</span><span class="block-pill">airplane mode</span></div>
+    <div class="block-body"><p><strong>Airplane mode.</strong> Keep building. Consistent mornings build the arc.</p></div>
+  </div>
+  <div class="block b-music">
+    <div class="block-head"><span class="block-time">10:30–11:30</span><span class="block-label">Extended vocal practice</span><span class="block-pill">gym rest day · coach prep</span></div>
+    <div class="block-body"><p><strong>No gym — put that hour into your voice.</strong> Full run-throughs, record and listen back. Work on anything the coach flagged last Friday. Arrive at tomorrow's session sharp.</p><div class="btags"><span class="btag">full run-throughs</span><span class="btag">record + listen</span><span class="btag">prep for Friday coach</span></div></div>
+  </div>
+  <div class="block b-rest">
+    <div class="block-head"><span class="block-time">11:30–11:45</span><span class="block-label">Shower</span><span class="block-pill">mid-morning</span></div>
+    <div class="block-body"><p>Shower. Lukewarm water.</p></div>
+  </div>
+  <div class="block b-content">
+    <div class="block-head"><span class="block-time">11:45–14:00</span><span class="block-label">Content block</span><span class="block-pill">Thursday: storytime / honest talk</span></div>
+    <div class="block-body"><p>Edit the talking clip. Storytime + singing format if useful — 20 sec story, straight into song. People connect with real.</p></div>
+  </div>
+  <div class="block b-rest">
+    <div class="block-head"><span class="block-time">14:00–14:30</span><span class="block-label">Lunch + 3 tasks</span><span class="block-pill">~50g protein · ~60g carbs</span></div>
+    <div class="block-body"><p><strong>Chicken rice bowl.</strong> Write 3 tasks for Friday.</p><div class="btags"><span class="btag">6oz chicken</span><span class="btag">¾ cup rice</span><span class="btag">spinach</span></div></div>
+  </div>
+  <div class="block b-income">
+    <div class="block-head"><span class="block-time">14:30–16:30</span><span class="block-label">Income work</span><span class="block-pill">dog training / clients</span></div>
+    <div class="block-body"><p>Dog training, client messages batched here.</p></div>
+  </div>
+  <div class="block b-music">
+    <div class="block-head"><span class="block-time">16:30–17:30</span><span class="block-label">Music block 2 — admin</span><span class="block-pill">Friday release prep</span></div>
+    <div class="block-body"><p>Prepare Friday release. Upload to distributor. Check everything is ready.</p></div>
+  </div>
+  <div class="block b-free">
+    <div class="block-head"><span class="block-time">17:30–18:45</span><span class="block-label">Free time</span><span class="block-pill">before tennis</span></div>
+    <div class="block-body"><p>Rest. Light snack if needed. Run through your rep mentally before tennis.</p></div>
+  </div>
+  <div class="block b-gym">
+    <div class="block-head"><span class="block-time">18:45–19:00</span><span class="block-label">Drive to tennis</span><span class="block-pill">15 min</span></div>
+    <div class="block-body"><p>Leave 18:45 — 15 min drive, arrive 19:00.</p></div>
+  </div>
+  <div class="block b-gym">
+    <div class="block-head"><span class="block-time">19:00–20:00</span><span class="block-label">Tennis</span><span class="block-pill">cardio on gym rest day</span></div>
+    <div class="block-body"><p>1 hour session. Good cardio without taxing the muscles from the gym split.</p></div>
+  </div>
+  <div class="block b-rest">
+    <div class="block-head"><span class="block-time">20:00–20:30</span><span class="block-label">Drive home</span><span class="block-pill">~30 min traffic</span></div>
+    <div class="block-body"><p>30 min back. Use the drive to mentally run through your rep for tomorrow's coach session.</p></div>
+  </div>
+  <div class="block b-rest">
+    <div class="block-head"><span class="block-time">20:30–21:00</span><span class="block-label">Shower + dinner</span><span class="block-pill">post-tennis</span></div>
+    <div class="block-body"><p>Quick shower, then dinner. <strong>5 oz salmon/tuna + sweet potato + steamed veg.</strong></p><div class="btags"><span class="btag">shower first</span><span class="btag">5oz salmon/tuna</span><span class="btag">sweet potato</span><span class="btag">steamed veg</span></div></div>
+  </div>
+  <div class="block b-skin-pm">
+    <div class="block-head"><span class="block-time">21:00–21:15</span><span class="block-label">Evening skincare</span><span class="block-pill">no retinol — Thu</span></div>
+    <div class="block-body"><p>Cleanser → HA → Peptides → Oxy ISDIN Eyes → <strong>Oil Control ISDIN (Thu = no retinol)</strong>. Phone away.</p></div>
+  </div>
+  <div class="block b-wind">
+    <div class="block-head"><span class="block-time">21:15–22:30</span><span class="block-label">Wind down · sleep by 22:30</span><span class="block-pill">no screens</span></div>
+    <div class="block-body"><p>No screens. Set up workspace. Review 3 tasks. Evening Habits shake if under 155g protein.</p></div>
+  </div>
+</div>
+
+<!-- ══ DAY 5 — FRIDAY ══ -->
+<div class="page" id="p-day5">
+  <div class="eyebrow">Friday · Day 5</div>
+  <div class="page-title" style="color:var(--green)">Friday</div>
+  <div class="page-lead">Shoulders day. Singing coach at 4pm. Release day. Retinol tonight.</div>
+
+  <div class="block b-skin-am">
+    <div class="block-head"><span class="block-time">7:00–7:20</span><span class="block-label">Wake up · make bed · morning skincare</span><span class="block-pill">5 min routine</span></div>
+    <div class="block-body"><p><strong>Make the bed immediately.</strong> Water + 5-step skincare. Cleanser → HA (damp skin) → Peptides → Eye Serum → Oil Control ISDIN. No phone until done.</p></div>
+  </div>
+
+  <div class="block b-dog">
+    <div class="block-head"><span class="block-time">7:20–8:20</span><span class="block-label">Morning dog walk</span><span class="block-pill">film your best clip</span></div>
+    <div class="block-body"><p>1 hour. Film at least 1 clip. Voice-note melody ideas. No scrolling.</p></div>
+  </div>
+
+  <div class="block b-rest">
+    <div class="block-head"><span class="block-time">8:20–8:40</span><span class="block-label">Breakfast</span><span class="block-pill">~35g protein · ~58g carbs</span></div>
+    <div class="block-body"><p><strong>4 scrambled eggs + ¾ cup dry oats (water, dash of honey) + black coffee.</strong> Prep ~10 min. Don't skip — 2 hrs creative work on empty kills focus.</p><div class="btags"><span class="btag">4 eggs</span><span class="btag">¾ cup oats</span><span class="btag">black coffee</span></div></div>
+  </div>
+
+  <div class="block b-music">
+    <div class="block-head"><span class="block-time">8:40–8:55</span><span class="block-label">Voice warmup + rep practice</span><span class="block-pill">15 min · every day</span></div>
+    <div class="block-body"><p><strong>Every single day before the music block.</strong> 5 min: lip trills, sirens, scales. Then 10 min running your current rep — not performing it, ingraining it. This is what the Friday coach sessions build on.</p><div class="btags"><span class="btag">lip trills</span><span class="btag">sirens</span><span class="btag">scales</span><span class="btag">rep run-through</span></div></div>
+  </div>
+
+  <div class="block b-music">
+    <div class="block-head"><span class="block-time">8:55–9:00</span><span class="block-label">Pre-workout shake</span><span class="block-pill">airplane mode</span></div>
+    <div class="block-body"><p><strong>Airplane mode.</strong> Polish Mon–Thu work. Final takes, final mixes, prep Friday release content.</p><div class="btags"><span class="btag">airplane mode</span><span class="btag">polish</span><span class="btag">final takes</span><span class="btag">release prep</span></div></div>
+  </div>
+
+  <div class="block b-rest">
+    <div class="block-head"><span class="block-time">9:00–9:30</span><span class="block-label">Music — 30 min before gym</span><span class="block-pill">warm up the mind</span></div>
+    <div class="block-body"><p>30 minutes. Keep it loose — play with ideas, revisit yesterday's work, let something sit. <strong>Don't start anything new.</strong> The real music block happens after gym when your body is activated.</p><div class="btags"><span class="btag">revisit yesterday</span><span class="btag">play with ideas</span><span class="btag">no new starts</span></div></div>
+  </div>
+
+  <div class="block b-gym">
+    <div class="block-head"><span class="block-time">9:30–11:15</span><span class="block-label">Gym + sauna</span><span class="block-pill">HA after sauna</span></div>
+    <div class="block-body"><p>45-min workout + 15-min sauna. <strong>Shoulders: DB Overhead Press · Lateral Raises (4×15 — key for the look) · Front Raises · Rear Delt Flyes · Arnold Press + 10 min bike (80–90 RPM).</strong> HA immediately after sauna — pores open, deepest absorption.</p></div>
+  </div>
+
+  <div class="block b-rest">
+    <div class="block-head"><span class="block-time">11:15–11:35</span><span class="block-label">Post-workout shake + shower</span><span class="block-pill">~25g protein · most important shake</span></div>
+    <div class="block-body"><p><strong>1 scoop Habits + 1 banana immediately after sauna.</strong> Most important shake of the day. Then shower (lukewarm water only).</p><div class="btags"><span class="btag">1 scoop Habits</span><span class="btag">1 banana</span><span class="btag">within 30 min of sauna</span><span class="btag">then shower</span></div></div>
+  </div>
+
+  <div class="block b-music">
+    <div class="block-head"><span class="block-time">11:35–14:00</span><span class="block-label">Music block — finishing &amp; polishing</span><span class="block-pill">main block · airplane mode</span></div>
+    <div class="block-body"><p><strong>Airplane mode. 2h25min.</strong> Post-gym energy. Polish the week's work, prep the Friday release. Longer than the old pre-gym block.</p><div class="btags"><span class="btag">airplane mode</span><span class="btag">polish</span><span class="btag">release prep</span></div></div>
+  </div>
+
+  <div class="block b-content">
+    <div class="block-head"><span class="block-time">14:00–14:30</span><span class="block-label">Content block — release push</span><span class="block-pill">Friday: push everything</span></div>
+    <div class="block-body"><p>Push the release. All 3 platforms. Link in bio, IG Stories. Reply every comment in first hour.</p><div class="btags"><span class="btag">release push</span><span class="btag">all platforms</span><span class="btag">reply comments</span></div></div>
+  </div>
+
+  <div class="block b-rest">
+    <div class="block-head"><span class="block-time">14:30–15:00</span><span class="block-label">Lunch + 3 tasks</span><span class="block-pill">~50g protein · ~60g carbs</span></div>
+    <div class="block-body"><p><strong>Chicken rice bowl.</strong> Write 3 tasks for Saturday.</p><div class="btags"><span class="btag">6oz chicken</span><span class="btag">¾ cup rice</span><span class="btag">spinach</span></div></div>
+  </div>
+
+  <div class="block b-income">
+    <div class="block-head"><span class="block-time">15:00–15:20</span><span class="block-label">Income work</span><span class="block-pill">tight window — coach at 4</span></div>
+    <div class="block-body"><p>Dog training, client messages. Brief — you need to leave by 3:20.</p></div>
+  </div>
+
+  <div class="block b-music">
+    <div class="block-head"><span class="block-time">15:20–15:35</span><span class="block-label">Quick warmup before coach</span><span class="block-pill">arrive warm</span></div>
+    <div class="block-body"><p>5–10 min light warmup before leaving. <strong>Arrive at the session already warm</strong> — don't waste the first 20 min of your paid hour getting your voice going.</p></div>
+  </div>
+
+  <div class="block b-gym">
+    <div class="block-head"><span class="block-time">15:35–16:00</span><span class="block-label">Drive to singing coach</span><span class="block-pill">40 min — leave by 3:20</span></div>
+    <div class="block-body"><p>40 min drive. Leave by 3:20 to arrive on time.</p></div>
+  </div>
+
+  <div class="block b-music">
+    <div class="block-head"><span class="block-time">16:00–17:00</span><span class="block-label">Singing coach session</span><span class="block-pill">1 hr · Mac open for admin</span></div>
+    <div class="block-body"><p>1 hour with your coach. Come with specific goals — phrases from your rep that aren't landing, technique questions. <strong>Any waiting time = Mac open: playlist pitching, outreach, scheduling.</strong></p><div class="btags"><span class="btag">come prepared</span><span class="btag">specific goals</span><span class="btag">Mac for admin if waiting</span></div></div>
+  </div>
+
+  <div class="block b-gym">
+    <div class="block-head"><span class="block-time">17:00–17:30</span><span class="block-label">Drive home from coach</span><span class="block-pill">30 min</span></div>
+    <div class="block-body"><p>30 min drive. <strong>Voice-note everything while fresh</strong> — what the coach said, what clicked, what to practice this week.</p></div>
+  </div>
+
+  <div class="block b-free">
+    <div class="block-head"><span class="block-time">17:30–19:00</span><span class="block-label">Free time</span><span class="block-pill">end of week</span></div>
+    <div class="block-body"><p>Full week done. Rest completely.</p></div>
+  </div>
+
+  <div class="block b-rest">
+    <div class="block-head"><span class="block-time">19:00–19:30</span><span class="block-label">Dinner</span><span class="block-pill">~40g protein · Friday treat</span></div>
+    <div class="block-body"><p><strong>5 oz salmon/tuna + sweet potato + steamed veg.</strong> Friday dinner — take your time. Screens away.</p><div class="btags"><span class="btag">5oz salmon/tuna</span><span class="btag">sweet potato</span><span class="btag">steamed veg</span></div></div>
+  </div>
+
+  <div class="block b-free">
+    <div class="block-head"><span class="block-time">19:30–20:00</span><span class="block-label">Digest · wind down</span><span class="block-pill">relax</span></div>
+    <div class="block-body"><p>Decompress.</p></div>
+  </div>
+
+  <div class="block b-dog">
+    <div class="block-head"><span class="block-time">20:00–21:00</span><span class="block-label">Evening dog walk</span><span class="block-pill">check release performance</span></div>
+    <div class="block-body"><p>Evening light. Film a clip. Check how the Friday release is performing.</p></div>
+  </div>
+
+  <div class="block b-skin-pm">
+    <div class="block-head"><span class="block-time">21:00–21:15</span><span class="block-label">Evening skincare</span><span class="block-pill">retinol tonight — Fri</span></div>
+    <div class="block-body"><p>Cleanser → HA → Peptides → Oxy ISDIN Eyes → <strong>Retinol (Fri = yes)</strong> — pea-size, always last. Phone away after.</p></div>
+  </div>
+
+  <div class="block b-wind">
+    <div class="block-head"><span class="block-time">21:15–22:30</span><span class="block-label">Wind down · sleep by 22:30</span><span class="block-pill">no screens</span></div>
+    <div class="block-body"><p>No screens. Set up workspace. Review 3 tasks. Evening Habits shake if under 155g.</p></div>
+  </div>
+
+</div>
+
+<!-- ══ DAY 6 — SATURDAY ══ -->
+<div class="page" id="p-day6">
+  <div class="eyebrow">Saturday · Day 6</div>
+  <div class="page-title" style="color:var(--purple)">Saturday</div>
+  <div class="page-lead">Legs &amp; Core day. Batch filming + batch cooking. Set the whole week up in one afternoon.</div>
+
+  <div class="block b-skin-am">
+    <div class="block-head"><span class="block-time">7:00–7:20</span><span class="block-label">Wake up · make bed · morning skincare</span><span class="block-pill">5 min routine</span></div>
+    <div class="block-body"><p><strong>Make the bed. Even Saturdays.</strong> Water + skincare. No phone until done.</p></div>
+  </div>
+  <div class="block b-dog">
+    <div class="block-head"><span class="block-time">7:20–8:20</span><span class="block-label">Morning dog walk</span><span class="block-pill">lifestyle content</span></div>
+    <div class="block-body"><p>Saturday walk = lifestyle content. Dogs, CDMX, golden hour. Film it all.</p></div>
+  </div>
+  <div class="block b-rest">
+    <div class="block-head"><span class="block-time">8:20–8:40</span><span class="block-label">Breakfast</span><span class="block-pill">~35g protein · ~58g carbs</span></div>
+    <div class="block-body"><p><strong>4 scrambled eggs + ¾ cup dry oats + black coffee.</strong></p><div class="btags"><span class="btag">4 eggs</span><span class="btag">¾ cup oats</span><span class="btag">black coffee</span></div></div>
+  </div>
+  <div class="block b-music">
+    <div class="block-head"><span class="block-time">8:40–8:55</span><span class="block-label">Voice warmup + rep practice</span><span class="block-pill">15 min · daily</span></div>
+    <div class="block-body"><p>Lip trills, sirens, scales. Then 10 min rep run-through.</p></div>
+  </div>
+  <div class="block b-music">
+    <div class="block-head"><span class="block-time">8:55–9:00</span><span class="block-label">Pre-workout shake</span><span class="block-pill">review &amp; refine only</span></div>
+    <div class="block-body"><p>65 min. Don't start anything new. Review what you built Mon–Fri. Let it breathe before Monday.</p></div>
+  </div>
+  <div class="block b-rest">
+    <div class="block-head"><span class="block-time">9:00–9:30</span><span class="block-label">Music — 30 min before gym</span><span class="block-pill">~25g protein</span></div>
+    <div class="block-body"><p>1 scoop Habits Protein before gym.</p></div>
+  </div>
+  <div class="block b-gym">
+    <div class="block-head"><span class="block-time">9:30–11:15</span><span class="block-label">Gym + sauna</span><span class="block-pill">HA after sauna</span></div>
+    <div class="block-body"><p>45-min workout + 15-min sauna. <strong>Legs &amp; Core: Goblet Squat · Leg Press · Romanian Deadlift · Leg Curl · Plank · Cable Crunches + 10 min Stairmaster (level 6–8).</strong> HA immediately after sauna.</p></div>
+  </div>
+  <div class="block b-rest">
+    <div class="block-head"><span class="block-time">11:15–11:35</span><span class="block-label">Post-workout shake + shower</span><span class="block-pill">~25g protein + banana</span></div>
+    <div class="block-body"><p><strong>1 scoop Habits + 1 banana.</strong> Then shower.</p></div>
+  </div>
+  <div class="block b-content">
+    <div class="block-head"><span class="block-time">11:35–13:30</span><span class="block-label">Batch filming session</span><span class="block-pill">3–5 clips for next week</span></div>
+    <div class="block-body"><p><strong>Most important content session of the week.</strong> Film 3–5 clips in one go. Write next week's captions. Schedule everything. This fills Mon–Fri with minimal daily effort.</p><div class="btags"><span class="btag">3–5 clips</span><span class="btag">different setups</span><span class="btag">write captions</span><span class="btag">schedule posts</span></div></div>
+  </div>
+  <div class="block b-rest">
+    <div class="block-head"><span class="block-time">13:30–14:00</span><span class="block-label">Lunch</span><span class="block-pill">~50g protein · ~60g carbs</span></div>
+    <div class="block-body"><p><strong>Chicken rice bowl.</strong> Eat away from screens.</p></div>
+  </div>
+  <div class="block b-income">
+    <div class="block-head"><span class="block-time">14:00–16:00</span><span class="block-label">Batch cook + light income work</span><span class="block-pill">45 min cook = full week sorted</span></div>
+    <div class="block-body"><p><strong>Batch cook for the week:</strong> grill all chicken, cook rice, microwave sweet potatoes. 45 min = Mon–Fri lunches and dinners sorted with zero daily prep. Light client check-ins alongside.</p><div class="btags"><span class="btag">grill chicken (week)</span><span class="btag">cook rice (week)</span><span class="btag">sweet potatoes</span><span class="btag">client check-ins</span></div></div>
+  </div>
+  <div class="block b-free">
+    <div class="block-head"><span class="block-time">16:00–19:00</span><span class="block-label">Free time</span><span class="block-pill">long Saturday block</span></div>
+    <div class="block-body"><p>Long free block. You've done the week and set up the next one. This is yours.</p></div>
+  </div>
+  <div class="block b-rest">
+    <div class="block-head"><span class="block-time">19:00–19:30</span><span class="block-label">Dinner</span><span class="block-pill">~40g protein</span></div>
+    <div class="block-body"><p><strong>5 oz salmon/tuna + sweet potato + steamed veg.</strong> Saturday — take your time. Screens away.</p></div>
+  </div>
+  <div class="block b-free">
+    <div class="block-head"><span class="block-time">19:30–20:00</span><span class="block-label">Digest · wind down</span><span class="block-pill">relax</span></div>
+    <div class="block-body"><p>Decompress.</p></div>
+  </div>
+  <div class="block b-dog">
+    <div class="block-head"><span class="block-time">20:00–21:00</span><span class="block-label">Evening dog walk</span><span class="block-pill">film a clip</span></div>
+    <div class="block-body"><p>Evening CDMX streets. Film something.</p></div>
+  </div>
+  <div class="block b-skin-pm">
+    <div class="block-head"><span class="block-time">21:00–21:15</span><span class="block-label">Evening skincare</span><span class="block-pill">no retinol — Sat</span></div>
+    <div class="block-body"><p>Cleanser → HA → Peptides → Oxy ISDIN Eyes → <strong>Oil Control ISDIN (Sat = no retinol)</strong>. Phone away.</p></div>
+  </div>
+  <div class="block b-wind">
+    <div class="block-head"><span class="block-time">21:15–22:30</span><span class="block-label">Wind down · sleep by 22:30</span><span class="block-pill">no screens</span></div>
+    <div class="block-body"><p>No screens. Set up workspace for Monday. Review 3 tasks. Protein shake if under 155g.</p></div>
+  </div>
+</div>
+
+<!-- ══ DAY 7 — SUNDAY ══ -->
+<div class="page" id="p-day7">
+  <div class="eyebrow">Sunday · Day 7</div>
+  <div class="page-title" style="color:var(--teal)">Sunday — free day</div>
+  <div class="page-lead">Full Body day if energy allows — optional. Rest is part of the system. You can't create from empty.</div>
+
+  <div class="block b-skin-am">
+    <div class="block-head"><span class="block-time">When you wake</span><span class="block-label">Make bed · morning skincare</span><span class="block-pill">no alarm</span></div>
+    <div class="block-body"><p><strong>Make the bed even on your free day.</strong> Skincare at your own pace. No rush.</p></div>
+  </div>
+  <div class="block b-dog">
+    <div class="block-head"><span class="block-time">Morning</span><span class="block-label">Dog walk — no filming</span><span class="block-pill">just walk</span></div>
+    <div class="block-body"><p>Leave the phone in your pocket. No filming unless something genuinely moves you. The walk is just a walk.</p></div>
+  </div>
+  <div class="block b-rest">
+    <div class="block-head"><span class="block-time">After walk</span><span class="block-label">Breakfast — no rush</span><span class="block-pill">Sunday pace</span></div>
+    <div class="block-body"><p><strong>4 eggs + oats + coffee.</strong> Take your time.</p></div>
+  </div>
+  <div class="block b-music">
+    <div class="block-head"><span class="block-time">Morning</span><span class="block-label">Light voice warmup — optional</span><span class="block-pill">10 min max · keep it easy</span></div>
+    <div class="block-body"><p>Optional 10 min — sirens and lip trills only. Keep the voice maintained without taxing it on rest day.</p></div>
+  </div>
+  <div class="block b-gym">
+    <div class="block-head"><span class="block-time">Optional</span><span class="block-label">Full Body + Core — Day 5 of split</span><span class="block-pill">only if feeling it</span></div>
+    <div class="block-body"><p><strong>Only train if you have the energy.</strong> DB Deadlift · Push-Ups · Pull-Ups · DB Lunges · Hanging Leg Raises + 15 min LISS treadmill. Skip if tired — rest matters too. Post-workout shake if you train.</p></div>
+  </div>
+  <div class="block b-free">
+    <div class="block-head"><span class="block-time">All day</span><span class="block-label">Complete rest</span><span class="block-pill">no work</span></div>
+    <div class="block-body"><p>No music block. No content. No income work. Be a person, not a creator. The music needs this day.</p></div>
+  </div>
+  <div class="block b-rest">
+    <div class="block-head"><span class="block-time">Around 14:00</span><span class="block-label">Lunch</span><span class="block-pill">~50g protein</span></div>
+    <div class="block-body"><p><strong>Chicken rice bowl</strong> from the Saturday batch cook. Zero prep needed.</p></div>
+  </div>
+  <div class="block b-rest">
+    <div class="block-head"><span class="block-time">Evening</span><span class="block-label">Dinner</span><span class="block-pill">~40g protein · best meal of the week</span></div>
+    <div class="block-body"><p><strong>5 oz salmon/tuna + sweet potato + steamed veg.</strong> No screens. Take your time.</p></div>
+  </div>
+  <div class="block b-dog">
+    <div class="block-head"><span class="block-time">Evening</span><span class="block-label">Evening dog walk</span><span class="block-pill">leave the phone</span></div>
+    <div class="block-body"><p>No filming. Just the city. These are the walks where songs come.</p></div>
+  </div>
+  <div class="block b-skin-pm">
+    <div class="block-head"><span class="block-time">Evening</span><span class="block-label">Evening skincare</span><span class="block-pill">no retinol — Sun</span></div>
+    <div class="block-body"><p>Cleanser → HA → Peptides → Oxy ISDIN Eyes → <strong>Oil Control ISDIN (Sun = no retinol)</strong>.</p></div>
+  </div>
+  <div class="block b-wind" style="border-color:var(--purple)">
+    <div class="block-head" style="background:var(--purple-dim)"><span class="block-time" style="color:var(--purple)">Before sleep</span><span class="block-label">Set up Monday</span></div>
+    <div class="block-body"><p><strong>Only system task today:</strong> write 3 tasks for Monday — one music, one content, one income. Then close the notebook. Monday starts with a mission. Sunday stays free.</p></div>
+  </div>
+</div>
+
+<!-- ══ SKINCARE ══ -->
+<div class="page" id="p-skin">
+  <div class="eyebrow">The face</div>
+  <div class="page-title" style="color:var(--amber)">Skincare</div>
+  <div class="page-lead">Your products are well chosen. The key is order, timing, and consistency. Wrong order = products cancel each other out. Consistency over 3 months is when the results show.</div>
+
+  <div class="warn-box">
+    <div class="warn-label">Critical rule — retinol</div>
+    <div class="warn-text"><strong>Retinol is evening only. Never morning.</strong> Sunlight breaks it down (makes it useless) and it makes skin sensitive to UV damage. Always the absolute last step at night. Start 3x per week — Mon / Wed / Fri — then build to nightly over 2–3 months as your skin adjusts. Expect some peeling in weeks 1–2. That's normal.</div>
+  </div>
+
+  <!-- MORNING -->
+  <div class="skin-r">
+    <div class="skin-r-head am">
+      <div>
+        <div class="skin-r-title">Morning routine</div>
+        <div class="skin-r-time">7:00am · 5 steps · 5 minutes</div>
+      </div>
+    </div>
+    <div class="skin-step am">
+      <div class="skin-num">1</div>
+      <div class="skin-b">
+        <div class="skin-product">Gentle cleanser</div>
+        <div class="skin-how">Lukewarm water. <strong>Don't over-wash</strong> — stripping oily skin makes it produce more oil. Gentle circular motion, rinse fully, pat dry.</div>
+        <span class="skin-why">removes overnight buildup</span>
+      </div>
+    </div>
+    <div class="skin-step am">
+      <div class="skin-num">2</div>
+      <div class="skin-b">
+        <div class="skin-product">Hyaluronic acid</div>
+        <div class="skin-how">Apply to <strong>damp skin — this is critical.</strong> Pat face dry but leave slightly damp. 2–3 drops, press gently. HA pulls moisture from the air — it needs water present to work. Dry skin = wasted product.</div>
+        <span class="skin-why">hydration — oily skin still needs moisture</span>
+      </div>
+    </div>
+    <div class="skin-step am">
+      <div class="skin-num">3</div>
+      <div class="skin-b">
+        <div class="skin-product">Peptides</div>
+        <div class="skin-how">Over the hyaluronic acid. <strong>A few drops, press in.</strong> Peptides signal skin to produce collagen — your anti-aging investment. Safe morning and evening.</div>
+        <span class="skin-why">anti-aging · collagen production</span>
+      </div>
+    </div>
+    <div class="skin-step am">
+      <div class="skin-num">4</div>
+      <div class="skin-b">
+        <div class="skin-product">Multipeptide eye serum</div>
+        <div class="skin-how"><strong>Ring finger only</strong> — weakest finger, won't tug the delicate eye area. Tap gently around the orbital bone. Never directly on the eyelid. A little goes a long way.</div>
+        <span class="skin-why">dark circles · fine lines · anti-aging</span>
+      </div>
+    </div>
+    <div class="skin-step am">
+      <div class="skin-num">5</div>
+      <div class="skin-b">
+        <div class="skin-product">Oil Control ISDIN</div>
+        <div class="skin-how">Final step — seals everything in. <strong>Check if it contains SPF.</strong> If it does, you're done. If not, add a sunscreen on top — sunscreen is the single most important anti-aging product you can use. Non-negotiable.</div>
+        <span class="skin-why">oil control · seals routine · SPF if applicable</span>
+      </div>
+    </div>
+    <div class="tip-box">
+      <div class="tip-text"><strong>Sauna tip:</strong> After your sauna, pores are open and skin is primed. Apply hyaluronic acid immediately post-sauna before anything else — it'll absorb deeper than at any other point in the day. Then finish the rest of the routine at home.</div>
+    </div>
+  </div>
+
+  <!-- EVENING -->
+  <div class="skin-r">
+    <div class="skin-r-head pm">
+      <div>
+        <div class="skin-r-title">Evening routine</div>
+        <div class="skin-r-time">21:00pm · 6 steps · 7 minutes</div>
+      </div>
+    </div>
+    <div class="skin-step pm">
+      <div class="skin-num">1</div>
+      <div class="skin-b">
+        <div class="skin-product">Cleanser</div>
+        <div class="skin-how">Proper cleanse — remove the day: sweat from gym, pollution from the walks, any buildup. <strong>Lukewarm water, gentle circles, rinse fully. Pat dry, don't rub.</strong></div>
+        <span class="skin-why">remove sweat · pollution · day buildup</span>
+      </div>
+    </div>
+    <div class="skin-step pm">
+      <div class="skin-num">2</div>
+      <div class="skin-b">
+        <div class="skin-product">Hyaluronic acid</div>
+        <div class="skin-how">Same as morning — <strong>apply to damp skin.</strong> At night your skin absorbs ingredients better. Sets up the perfect base for everything that follows.</div>
+        <span class="skin-why">deep overnight hydration</span>
+      </div>
+    </div>
+    <div class="skin-step pm">
+      <div class="skin-num">3</div>
+      <div class="skin-b">
+        <div class="skin-product">Peptides</div>
+        <div class="skin-how">Over the hyaluronic acid. Night is when skin repairs itself — <strong>peptides work hardest while you sleep.</strong> Press in gently.</div>
+        <span class="skin-why">overnight collagen repair</span>
+      </div>
+    </div>
+    <div class="skin-step pm">
+      <div class="skin-num">4</div>
+      <div class="skin-b">
+        <div class="skin-product">Oxy ISDIN eyes</div>
+        <div class="skin-how">Evening eye treatment. <strong>Ring finger, tap gently</strong> around the orbital bone. Targets puffiness and dark circles overnight. Use this at night — multipeptide serum in the morning. Don't layer both at once.</div>
+        <span class="skin-why">depuff · brighten overnight</span>
+      </div>
+    </div>
+    <div class="skin-step pm">
+      <div class="skin-num">5</div>
+      <div class="skin-b">
+        <div class="skin-product">Retinol — Mon / Wed / Fri only</div>
+        <div class="skin-how"><strong>Always last. Pea-sized amount across whole face.</strong> Less is more. Avoid the eye area completely — the Oxy ISDIN handles that. Start 3x per week, build to nightly over 2–3 months. <strong>Expect some dryness or peeling week 1–2 — that's it working.</strong></div>
+        <span class="skin-why">anti-aging · cell turnover · acne · the big one</span>
+      </div>
+    </div>
+    <div class="skin-step pm">
+      <div class="skin-num">6</div>
+      <div class="skin-b">
+        <div class="skin-product">Oil Control ISDIN — Tue / Thu / Sat / Sun only</div>
+        <div class="skin-how">On non-retinol nights, skip step 5 and finish with this instead. Your final moisturising step on the nights your skin gets a retinol break.</div>
+        <span class="skin-why">hydration on rest nights</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ LAWS ══ -->
+<div class="page" id="p-laws">
+  <div class="eyebrow">The foundation</div>
+  <div class="page-title" style="color:var(--teal)">Daily laws</div>
+  <div class="page-lead">Everything else is flexible. These aren't. Six months of this system will completely change your life.</div>
+
+  <div class="quote">
+    <p>"the music is the only thing i've ever been sure about. so i built the whole day around protecting it."</p>
+    <div class="qa">casey musk — the system</div>
+  </div>
+
+  <div class="rule"><div class="rule-n">1</div><div class="rule-body"><div class="rule-title">Music block at 8:20am. Airplane mode. Every day.</div><div class="rule-desc">It goes first or it never goes. The rest of the day exists to support this two hours. If you miss it, you don't make it up — you just show up tomorrow.</div></div></div>
+  <div class="rule"><div class="rule-n">2</div><div class="rule-body"><div class="rule-title">Film every dog walk. One clip minimum.</div><div class="rule-desc">Daily content sorted before you sit down to edit. The walks are where the relaxed, authentic content lives. That's the tone of the whole brand.</div></div></div>
+  <div class="rule"><div class="rule-n">3</div><div class="rule-body"><div class="rule-title">Skincare morning and evening. No exceptions.</div><div class="rule-desc">5 minutes in the morning, 7 at night. Consistency over 3 months is when results show. The routine compounds exactly like the content does.</div></div></div>
+  <div class="rule"><div class="rule-n">4</div><div class="rule-body"><div class="rule-title">Retinol evenings only — Mon/Wed/Fri. Always last step.</div><div class="rule-desc">Never morning. Never near the eyes. Never more than a pea-size. Expect week 1–2 adjustment. Don't stop — that's it working.</div></div></div>
+  <div class="rule"><div class="rule-n">5</div><div class="rule-body"><div class="rule-title">3 tasks the night before. One music, one content, one income.</div><div class="rule-desc">Wake up with a mission. Three things only — nothing else gets written down. Clarity is the point.</div></div></div>
+  <div class="rule"><div class="rule-n">6</div><div class="rule-body"><div class="rule-title">Post every day. Even badly.</div><div class="rule-desc">A rough 30-second video filmed in 10 minutes beats no video. The algorithm rewards consistency over perfection. So does the audience.</div></div></div>
+  <div class="rule"><div class="rule-n">7</div><div class="rule-body"><div class="rule-title">All communication lives in the 14:00–16:00 window.</div><div class="rule-desc">Texts, DMs, client messages, emails — batched here. They don't touch your creative hours. Creative Casey and income Casey stay separate.</div></div></div>
+  <div class="rule"><div class="rule-n">8</div><div class="rule-body"><div class="rule-title">Announce your deadlines publicly.</div><div class="rule-desc">"Track drops Friday." "Video out tonight." Say it on stories before it's done. Your word becomes the pressure. Public commitment is the cheapest form of accountability.</div></div></div>
+  <div class="rule"><div class="rule-n">9</div><div class="rule-body"><div class="rule-title">Chicago is in ~90 days. The system exists to make sure you arrive ready.</div><div class="rule-desc">By the time you land, you should have: 3 songs finished, an audience that's been following for 3 months, a body of content that tells the story leading up to Day 1. The move is the canon event. Make the buildup worth it.</div></div></div>
+  <div class="rule"><div class="rule-n">10</div><div class="rule-body"><div class="rule-title">Same structure every day. The freedom is in the music, not the schedule.</div><div class="rule-desc">The schedule removes decisions. Decisions cost creative energy. Every choice you don't have to make before 8:20am is energy you spend on the thing that actually matters.</div></div></div>
+</div>
+
+<script>
+function go(id, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nb').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+  window.scrollTo(0, 0);
+}
+</script>
+</body>
+</html>
